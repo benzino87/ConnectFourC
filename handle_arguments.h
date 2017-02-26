@@ -9,6 +9,7 @@
 struct arguments {
 	int height;
 	int width;
+	int connect;
 	char *load_file;
 };
 

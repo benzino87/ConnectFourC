@@ -277,3 +277,48 @@ void convertForSave(char** gameboard, char* buffer, int height, int width){
      count++;
    }
 }
+int getFileHeight(char* buffer){
+  int pos = 0;
+  int row = 0;
+
+  while(buffer[pos] != '\0'){
+    if(buffer[pos] == '\n'){
+      row++;
+    }
+    pos++;
+  }
+  return row+1;
+}
+int getFileWidth(char* buffer){
+  int pos = 0;
+  int col = 0;
+
+  while(buffer[pos] != '\n'){
+    // if(buffer[pos] == '\0'){
+    //   return col+1;
+    // }
+        col = pos;
+        col++;
+        pos++;
+  }
+  return col;
+}
+char** initializeFromLoad(char* buffer, int buffsize, int height, int width){
+  char** gameboard;
+  gameboard = malloc(sizeof(char*)*height);
+  for(int i = 0; i < height; i++){
+    gameboard[i] = malloc(sizeof(char)*width);
+  }
+  printf("Game board initialized...\n");
+  printf("Loading gameboard...\n");
+  int row = 0;
+
+  for(int i = 0; i < buffsize; i++){
+    if(buffer[i] == '\n'){
+      row++;
+    }
+    gameboard[row][i] = buffer[i];
+  }
+
+  return gameboard;
+}

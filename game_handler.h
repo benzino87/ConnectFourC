@@ -9,7 +9,9 @@ int checkWinHorizontal(char** gameboard, int height, int width, int required, in
 int checkWinVertical(char** gameboard, int height, int width, int required, int row, int col, int currentPlayer);
 int checkWinDiag(char** gameboard, int height, int width, int required, int row, int col, int currentPlayer);
 void convertForSave(char** gameboard, char* buffer, int height, int width);
-void convertFromLoad(char** gameboard, char* buffer);
+char** initializeFromLoad(char* buffer, int buffsize, int height, int width);
+int getFileHeight(char* buffer);
+int getFileWidth(char* buffer);
 
 
 #endif

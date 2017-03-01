@@ -30,6 +30,10 @@ int main(int argc, char** argv){
   int currentPlayer;
   //Save buffer
   char* buffer = NULL;
+  //Gameboard
+  char** gameboard;
+
+  int buffsize;
 
   //If no arguments have default setup 7x7, 4 to win
   if(argc == 1){
@@ -53,19 +57,32 @@ int main(int argc, char** argv){
     args.connect = 4;
   }
 
-
   if(args.load_file != NULL){
     if(read_file(args.load_file, &buffer) == -1){
-      printf("Error reading filename");
+      printf("Error reading filename\n");
+      exit(1);
     }else{
-      for(int i = 0; i < )
+      args.height = getFileHeight(buffer);
+      args.width = getFileWidth(buffer);
+      buffsize = args.height*args.width-2;
+
+      gameboard = initializeFromLoad(buffer, buffsize, args.height, args.width);
+
+      printGameboard(gameboard, args.height, args.width);
+
+      printf("height %d\n", args.height);
+      printf("width %d\n", args.width);
+      exit(1);
+      //gameboard = initializeFromLoad(buffer);
+      //printGameboard(gameboard)
     }
 
   }
-  int buffsize = args.height*args.width+args.height-2;
+
+  buffsize = args.height*args.width+args.height-2;
   buffer = malloc(sizeof(char)*buffsize);
   //Initialize gameboard
-  char** gameboard;
+
   gameboard = initializeGameboard(args.height, args.width);
   printGameboard(gameboard, args.height, args.width);
 
@@ -118,5 +135,8 @@ int main(int argc, char** argv){
     printGameboard(gameboard, args.height, args.width);
 
   }
+  free(buffer);
+  free(gameboard);
+  free(input);
   return 0;
 }

@@ -134,6 +134,18 @@ int checkWin(char** gameboard, int height, int width, int required, int row, int
   return -1;
 }
 
+void convertForSave(char** gameboard, char* buffer, int height, int width){
+   int count = 0;
+   for(int row = 0; row < height; row++){
+     for(int col = 0; col < width; col++){
+       buffer[count] = gameboard[row][col];
+       count++;
+     }
+     buffer[count] = '\n';
+     count++;
+   }
+}
+
 
 
 // void checkForWin(char** gameboard, int height, int width, int currentPlayer){

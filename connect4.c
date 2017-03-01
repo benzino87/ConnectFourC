@@ -1,5 +1,6 @@
 #include "handle_arguments.h"
 #include "game_handler.h"
+#include "file_utils.h"
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <stdio.h>
@@ -19,6 +20,8 @@ int main(int argc, char** argv){
   char* input = malloc(sizeof(char)*10);
   //Current player
   int currentPlayer;
+  //Save buffer
+  char* buffer;
 
   //If no arguments have default setup 7x7, 4 to win
   if(argc == 1){
@@ -43,7 +46,12 @@ int main(int argc, char** argv){
   }
 
 
+  if(args.load_file != NULL){
+    load_file(args.load_file, buffer);
 
+  }
+  int buffsize = args.height*args.width+args.height-2;
+  buffer = malloc(sizeof(char)*buffsize);
   //Initialize gameboard
   char** gameboard;
   gameboard = initializeGameboard(args.height, args.width);
@@ -61,27 +69,25 @@ int main(int argc, char** argv){
     fgets(input, 10, stdin);
     if(atoi(input) > args.width){
       printf("Too large, enter a number from 0 to %d..\n", args.width);
-    }else{
-      if((row = playerMove(gameboard, args.height, atoi(input), currentPlayer)) >= 0){
-        if(checkWin(gameboard, args.height, args.width, args.connect, row, atoi(input), currentPlayer) == -1){
-          currentPlayer = alternatePlayer(currentPlayer);
-        }else{
-          printGameboard(gameboard, args.height, args.width);
-          printf("PLAYER %d WINS!!!\n\n", currentPlayer);
-          break;
-        }
-      }
-      printGameboard(gameboard, args.height, args.width);
-
     }
-
-
-
+    if(strncmp(input, "save", 10) > 0){
+      convertForSave(gameboard, buffer, args.height, args.width);
+      write_file("gamesave", buffer, buffsize);
+      printf("GAME SAVED!\n");
+      break;
+    }
+    if((row = playerMove(gameboard, args.height, atoi(input), currentPlayer)) >= 0){
+      if(checkWin(gameboard, args.height, args.width, args.connect,
+                          row, atoi(input), currentPlayer) == -1){
+        currentPlayer = alternatePlayer(currentPlayer);
+      }else{
+        printGameboard(gameboard, args.height, args.width);
+        printf("PLAYER %d WINS!!!\n\n", currentPlayer);
+        break;
+      }
+    }
+    printGameboard(gameboard, args.height, args.width);
 
   }
-
-  printf("height:%d\n", args.height);
-  printf("width:%d\n", args.width);
-  printf("file:%s\n", args.load_file);
   return 0;
 }

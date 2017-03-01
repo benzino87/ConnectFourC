@@ -1,3 +1,10 @@
+/**
+ * Author: Jason Bensel
+ *
+ * Description: Main game loop, delegates incoming parameters to arg handler and
+ *              main game logic to game handler.
+ */
+
 #include "handle_arguments.h"
 #include "game_handler.h"
 #include "file_utils.h"
@@ -8,8 +15,9 @@
 #include <unistd.h>
 #include <string.h>
 
-
+//Player one
 #define playerOne 1
+//Player two
 #define playerTwo 2
 
 int main(int argc, char** argv){
@@ -21,7 +29,7 @@ int main(int argc, char** argv){
   //Current player
   int currentPlayer;
   //Save buffer
-  char* buffer;
+  char* buffer = NULL;
 
   //If no arguments have default setup 7x7, 4 to win
   if(argc == 1){
@@ -47,7 +55,11 @@ int main(int argc, char** argv){
 
 
   if(args.load_file != NULL){
-    load_file(args.load_file, buffer);
+    if(read_file(args.load_file, &buffer) == -1){
+      printf("Error reading filename");
+    }else{
+      for(int i = 0; i < )
+    }
 
   }
   int buffsize = args.height*args.width+args.height-2;
@@ -66,24 +78,41 @@ int main(int argc, char** argv){
     printf("CURRENT PLAYER: %d\n", currentPlayer);
     printf("Enter column:");
 
+    //Read user input
     fgets(input, 10, stdin);
     if(atoi(input) > args.width){
       printf("Too large, enter a number from 0 to %d..\n", args.width);
     }
+    //Check for save
     if(strncmp(input, "save", 10) > 0){
+      //Convert grid to to a save buffer
       convertForSave(gameboard, buffer, args.height, args.width);
       write_file("gamesave", buffer, buffsize);
       printf("GAME SAVED!\n");
       break;
     }
-    if((row = playerMove(gameboard, args.height, atoi(input), currentPlayer)) >= 0){
-      if(checkWin(gameboard, args.height, args.width, args.connect,
-                          row, atoi(input), currentPlayer) == -1){
-        currentPlayer = alternatePlayer(currentPlayer);
+    //Check for valid move
+    if((row = playerMove(gameboard, args.height, args.width, atoi(input), currentPlayer)) >= 0){
+      int vertWin, horzWin, diagWin;
+
+      //Check player win status
+      vertWin = checkWinVertical(gameboard, args.height, args.width, args.connect,
+                          row, atoi(input), currentPlayer);
+
+      horzWin = checkWinHorizontal(gameboard, args.height, args.width, args.connect,
+                            row, atoi(input), currentPlayer);
+
+
+      diagWin = checkWinDiag(gameboard, args.height, args.width, args.connect,
+                            row, atoi(input), currentPlayer);
+
+      if(vertWin == currentPlayer || horzWin == currentPlayer || diagWin == currentPlayer){
+          printGameboard(gameboard, args.height, args.width);
+          printf("PLAYER %d WINS!!!\n\n", currentPlayer);
+          break;
       }else{
-        printGameboard(gameboard, args.height, args.width);
-        printf("PLAYER %d WINS!!!\n\n", currentPlayer);
-        break;
+        //Change player and continue playing
+        currentPlayer = alternatePlayer(currentPlayer);
       }
     }
     printGameboard(gameboard, args.height, args.width);

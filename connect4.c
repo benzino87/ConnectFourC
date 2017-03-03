@@ -27,12 +27,12 @@ int main(int argc, char** argv){
   //User input
   char* input = malloc(sizeof(char)*10);
   //Current player
-  int currentPlayer;
+  int currentPlayer = 1;
   //Save buffer
   char* buffer = NULL;
   //Gameboard
   char** gameboard;
-
+  //Buffer size of loaded file
   int buffsize;
 
   //If no arguments have default setup 7x7, 4 to win
@@ -62,77 +62,76 @@ int main(int argc, char** argv){
       printf("Error reading filename\n");
       exit(1);
     }else{
+      //Get file parameters
       args.height = getFileHeight(buffer);
       args.width = getFileWidth(buffer);
       buffsize = args.height*args.width-2;
 
-      gameboard = initializeFromLoad(buffer, buffsize, args.height, args.width);
+      initializeFromLoad(&gameboard, buffer, buffsize, args.height, args.width);
 
       printGameboard(gameboard, args.height, args.width);
-
-      printf("height %d\n", args.height);
-      printf("width %d\n", args.width);
       exit(1);
-      //gameboard = initializeFromLoad(buffer);
-      //printGameboard(gameboard)
+
     }
 
   }
 
   buffsize = args.height*args.width+args.height-2;
   buffer = malloc(sizeof(char)*buffsize);
-  //Initialize gameboard
 
-  gameboard = initializeGameboard(args.height, args.width);
+
+  //Initialize gameboard
+  initializeGameboard(&gameboard, args.height, args.width);
   printGameboard(gameboard, args.height, args.width);
 
 
-  currentPlayer = 1;
-  int row;
-  printf("READY TO PLAY!!\n\n");
-  //Start game
+  printf("\n\n444444  444444  4     4   4     4  444444  444444  444444\n");
+  printf("4       4    4  4 4   4   4 4   4  4       4          4\n");
+  printf("4       4    4  4  4  4   4  4  4  444444  4          4\n");
+  printf("4       4    4  4   4 4   4   4 4  4       4          4\n");
+  printf("444444  444444  4    44   4    44  444444  444444     4\n\n");
+  printf("                           4\n");
+  printf("                          44\n");
+  printf("                         4 4\n");
+  printf("                        4  4\n");
+  printf("                       4444444\n");
+  printf("                           4\n")
+  printf("                    READY TO PLAY!!\n\n");
+
+
+  //Start game loop
   while(strncmp(input, "quit", 10) < 0 ){
     printf("CURRENT PLAYER: %d\n", currentPlayer);
     printf("Enter column:");
 
     //Read user input
     fgets(input, 10, stdin);
-    if(atoi(input) > args.width){
-      printf("Too large, enter a number from 0 to %d..\n", args.width);
-    }
-    //Check for save
-    if(strncmp(input, "save", 10) > 0){
-      //Convert grid to to a save buffer
-      convertForSave(gameboard, buffer, args.height, args.width);
-      write_file("gamesave", buffer, buffsize);
-      printf("GAME SAVED!\n");
-      break;
-    }
-    //Check for valid move
-    if((row = playerMove(gameboard, args.height, args.width, atoi(input), currentPlayer)) >= 0){
-      int vertWin, horzWin, diagWin;
 
-      //Check player win status
-      vertWin = checkWinVertical(gameboard, args.height, args.width, args.connect,
-                          row, atoi(input), currentPlayer);
+    //Check for valid user input
+    if(atoi(input) > args.width-1 || atoi(input) < 0){
+      printf("*****Number entered is either too small or too large.******\n");
+      printf("             Enter a number from 0 to %d..\n", args.width-1);
 
-      horzWin = checkWinHorizontal(gameboard, args.height, args.width, args.connect,
-                            row, atoi(input), currentPlayer);
+    }else{
 
-
-      diagWin = checkWinDiag(gameboard, args.height, args.width, args.connect,
-                            row, atoi(input), currentPlayer);
-
-      if(vertWin == currentPlayer || horzWin == currentPlayer || diagWin == currentPlayer){
-          printGameboard(gameboard, args.height, args.width);
-          printf("PLAYER %d WINS!!!\n\n", currentPlayer);
-          break;
-      }else{
-        //Change player and continue playing
-        currentPlayer = alternatePlayer(currentPlayer);
+      //Check for save
+      if(strncmp(input, "save", 10) > 0){
+        //Convert grid to to a save buffer
+        convertForSave(gameboard, buffer, args.height, args.width);
+        write_file("gamesave", buffer, buffsize);
+        printf("*****GAME SAVED!*****\n");
+        break;
       }
+
+      //Play game as normal
+      if(playGame(gameboard, args.height, args.width, args.connect, atoi(input), currentPlayer) == -1){
+        currentPlayer = alternatePlayer(currentPlayer);
+      }else{
+        //Win found
+        break;
+      }
+      printGameboard(gameboard, args.height, args.width);
     }
-    printGameboard(gameboard, args.height, args.width);
 
   }
   free(buffer);

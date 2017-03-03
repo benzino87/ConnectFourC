@@ -23,7 +23,7 @@
 //Boolean value
 #define FALSE 0
 //Grid status
-#define EMPTY 'x'
+#define EMPTY '*'
 
 
 /**
@@ -35,20 +35,21 @@
  *
  * @return: returns a newly created gameboard with given heighth and width
  */
-char** initializeGameboard(int height, int width){
-  char** gameboard;
-  gameboard = malloc(sizeof(char*)*height);
+void initializeGameboard(char*** gameboard, int height, int width){
+  char** board;
+  board = malloc(sizeof(char*)*height);
   for(int i = 0; i < height; i++){
-    gameboard[i] = malloc(sizeof(char)*width);
+    board[i] = malloc(sizeof(char)*width);
   }
-  printf("Game board initialized...\n");
+  printf("                 Game board initialized...\n\n");
 
   for(int row = 0; row < height; row++){
     for(int col = 0; col < width; col++){
-      gameboard[row][col] = 'x';
+      board[row][col] = EMPTY;
     }
   }
-  return gameboard;
+  *gameboard = board;
+  //return gameboard;
 
 }
 
@@ -63,12 +64,42 @@ char** initializeGameboard(int height, int width){
  * @param (width): width of gameboard for iterations
  */
 void printGameboard(char** gameboard, int height, int width){
+  for(int col = 0; col < width; col++){
+    if(col == 0){
+      printf("                        ");
+    }
+    printf("%d", col);
+  }
+  printf("\n");
+  for(int col = 0; col < width; col++){
+    if(col == 0){
+      printf("                        ");
+    }
+    printf("_");
+  }
+  printf("\n");
   for(int row = height-1; row >= 0; row--){
+    printf("                       |");
     for(int col = 0; col < width; col++){
       printf("%c", gameboard[row][col]);
     }
-    printf("\n");
+    printf("|\n");
   }
+  for(int col = 0; col < width; col++){
+    if(col == 0){
+      printf("                        ");
+    }
+    printf("=");
+  }
+  printf("\n");
+  for(int col = 0; col < width; col++){
+    if(col == 0){
+      printf("                        ");
+    }
+    printf("%d", col);
+  }
+
+  printf("\n");
 }
 
 /**
@@ -113,7 +144,7 @@ int playerMove(char** gameboard, int height, int width, int pos, int currentPlay
       break;
     }
     if(row == height-1 && gameboard[row][height] != EMPTY){
-      printf("This row is filled\n");
+      printf("             *****This row is filled*****\n");
       return -1;
     }
   }
@@ -277,6 +308,11 @@ void convertForSave(char** gameboard, char* buffer, int height, int width){
      count++;
    }
 }
+/**
+ * Gets row height of file for gameboard parameters
+ *
+ * @param (buffer): buffer holding gameboard
+ */
 int getFileHeight(char* buffer){
   int pos = 0;
   int row = 0;
@@ -289,36 +325,96 @@ int getFileHeight(char* buffer){
   }
   return row+1;
 }
+
+/**
+ * Gets column width of file for gameboard parameters
+ *
+ * @param (buffer): buffer holding gameboard
+ */
 int getFileWidth(char* buffer){
   int pos = 0;
   int col = 0;
 
   while(buffer[pos] != '\n'){
-    // if(buffer[pos] == '\0'){
-    //   return col+1;
-    // }
         col = pos;
         col++;
         pos++;
   }
   return col;
 }
-char** initializeFromLoad(char* buffer, int buffsize, int height, int width){
-  char** gameboard;
-  gameboard = malloc(sizeof(char*)*height);
+
+/**
+ * Loads in the buffer and converts the buffer to a gameboard
+ *
+ * @param (buffer):
+ *
+ * @param (buffsize):
+ *
+ * @param (height):
+ *
+ * @param (width):
+ *
+ * @return: returns a gameboard from a previous saved state
+ */
+void initializeFromLoad(char*** gameboard, char* buffer, int buffsize, int height, int width){
+  char** board;
+  board = malloc(sizeof(char*)*height);
   for(int i = 0; i < height; i++){
-    gameboard[i] = malloc(sizeof(char)*width);
+    board[i] = malloc(sizeof(char)*width);
   }
   printf("Game board initialized...\n");
   printf("Loading gameboard...\n");
   int row = 0;
 
   for(int i = 0; i < buffsize; i++){
+    //printf("%c", buffer[i]);
     if(buffer[i] == '\n'){
       row++;
+    }else{
+      board[row][i] = buffer[i];
     }
-    gameboard[row][i] = buffer[i];
   }
+  *gameboard = board;
+}
 
-  return gameboard;
+/**
+ * Handles all of a majority of the game logic, valid player moves and win checks
+ *
+ * @param (gameboard):
+ *
+ * @param (height):
+ *
+ * @param (width):
+ *
+ * @param (connect):
+ *
+ * @param (input):
+ *
+ * @param (currentPlayer):
+ *
+ * @return: returns 1 if win found otherwise -1 indicating no win found
+ */
+int playGame(char** gameboard, int height, int width, int connect, int input, int currentPlayer){
+  int row;
+  if((row = playerMove(gameboard, height, width, input, currentPlayer)) >= 0){
+    int vertWin, horzWin, diagWin;
+
+    //Check player win status
+    vertWin = checkWinVertical(gameboard, height, width, connect,
+                        row, input, currentPlayer);
+
+    horzWin = checkWinHorizontal(gameboard, height, width, connect,
+                          row, input, currentPlayer);
+
+
+    diagWin = checkWinDiag(gameboard, height, width, connect,
+                          row, input, currentPlayer);
+
+    if(vertWin == currentPlayer || horzWin == currentPlayer || diagWin == currentPlayer){
+        printGameboard(gameboard, height, width);
+        printf("PLAYER %d WINS!!!\n\n", currentPlayer);
+        return 1;
+    }
+  }
+  return -1;
 }

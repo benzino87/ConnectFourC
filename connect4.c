@@ -80,10 +80,6 @@ int main(int argc, char** argv){
   buffer = malloc(sizeof(char)*buffsize);
 
 
-  //Initialize gameboard
-  initializeGameboard(&gameboard, args.height, args.width);
-  printGameboard(gameboard, args.height, args.width);
-
 
   printf("\n\n444444  444444  4     4   4     4  444444  444444  444444\n");
   printf("4       4    4  4 4   4   4 4   4  4       4          4\n");
@@ -95,9 +91,12 @@ int main(int argc, char** argv){
   printf("                         4 4\n");
   printf("                        4  4\n");
   printf("                       4444444\n");
-  printf("                           4\n")
+  printf("                           4\n");
   printf("                    READY TO PLAY!!\n\n");
-
+  
+  //Initialize Gameboard
+  initializeGameboard(&gameboard, args.height, args.width);
+  printGameboard(gameboard, args.height, args.width);
 
   //Start game loop
   while(strncmp(input, "quit", 10) < 0 ){

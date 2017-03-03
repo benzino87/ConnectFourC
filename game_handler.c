@@ -346,13 +346,13 @@ int getFileWidth(char* buffer){
 /**
  * Loads in the buffer and converts the buffer to a gameboard
  *
- * @param (buffer):
+ * @param (buffer): buffer containing saved gameboard
  *
- * @param (buffsize):
+ * @param (buffsize): size of buffer (gameboard)
  *
- * @param (height):
+ * @param (height): height in rows
  *
- * @param (width):
+ * @param (width): width in columns
  *
  * @return: returns a gameboard from a previous saved state
  */
@@ -380,17 +380,17 @@ void initializeFromLoad(char*** gameboard, char* buffer, int buffsize, int heigh
 /**
  * Handles all of a majority of the game logic, valid player moves and win checks
  *
- * @param (gameboard):
+ * @param (gameboard): current gameboard
  *
- * @param (height):
+ * @param (height): height in rows
  *
- * @param (width):
+ * @param (width): width in columns
  *
- * @param (connect):
+ * @param (connect): required connections to win
  *
- * @param (input):
+ * @param (input): input from user(selected column)
  *
- * @param (currentPlayer):
+ * @param (currentPlayer): player who just made a move
  *
  * @return: returns 1 if win found otherwise -1 indicating no win found
  */

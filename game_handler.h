@@ -1,3 +1,10 @@
+/**
+ * AUTHOR: Jason Bensel
+ * DESCRIPTION: CIS 343 Structure of Programming languages Project 3
+ * DATE: 3/3/2017
+ *
+ * Game handler method declarations.
+ */
 #ifndef GAME_HANDLER_H
 #define GAME_HANDLER_H
 

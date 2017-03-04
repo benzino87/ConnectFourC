@@ -1,9 +1,10 @@
 /**
- * Author: Jason Bensel
+ * AUTHOR: Jason Bensel
+ * DESCRIPTION: CIS 343 Structure of Programming languages Project 3
+ * DATE: 3/3/2017
  *
- * Description: Handles all game logic including creation of grid, printing
- *              grid, valid player moves, win status, conversions for file saves
- *              and loads.
+ * Handles all game logic including creation of grid, printing grid,
+ * valid player moves, win status, conversions for file save and loads.
  */
 
 #include "game_handler.h"
@@ -364,14 +365,18 @@ void initializeFromLoad(char*** gameboard, char* buffer, int buffsize, int heigh
   }
   printf("Game board initialized...\n");
   printf("Loading gameboard...\n");
-  int row = 0;
+  int row = height-1;
 
-  for(int i = 0; i < buffsize; i++){
-    //printf("%c", buffer[i]);
+  for(int i = buffsize; i > 0; i--){
     if(buffer[i] == '\n'){
-      row++;
+      row--;
+      printf("\n");
     }else{
-      board[row][i] = buffer[i];
+      if(i > width-1){
+        board[row][(i-row)%width] = buffer[i];
+      }else{
+        board[row][i-row] = buffer[i];
+      }
     }
   }
   *gameboard = board;

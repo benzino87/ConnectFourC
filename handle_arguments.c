@@ -1,3 +1,7 @@
+/**
+ * Argument handler provided by Mr. Woodring with minor changes to struct
+ * info, parse_opt, and setup.
+ */
 #include <stdlib.h>
 #include "handle_arguments.h"
 

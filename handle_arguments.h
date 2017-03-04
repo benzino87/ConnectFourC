@@ -1,3 +1,6 @@
+/**
+ * Argument handler provided by Mr. Woodring
+ */
 #ifndef H_HANDLE_ARGUMENTS
 #define H_HANDLE_ARGUMENTS
 

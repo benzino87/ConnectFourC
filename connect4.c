@@ -1,8 +1,10 @@
 /**
- * Author: Jason Bensel
+ * AUTHOR: Jason Bensel
+ * DESCRIPTION: CIS 343 Structure of Programming languages Project 3
+ * DATE: 3/3/2017
  *
- * Description: Main game loop, delegates incoming parameters to arg handler and
- *              main game logic to game handler.
+ * Main game loop, delegates incoming parameters to arg handler and main game
+ * logic to game handler.
  */
 
 #include "handle_arguments.h"
@@ -35,6 +37,20 @@ int main(int argc, char** argv){
   //Buffer size of loaded file
   int buffsize;
 
+
+  printf("\n\n444444  444444  4     4   4     4  444444  444444  444444\n");
+  printf("4       4    4  4 4   4   4 4   4  4       4          4\n");
+  printf("4       4    4  4  4  4   4  4  4  444444  4          4\n");
+  printf("4       4    4  4   4 4   4   4 4  4       4          4\n");
+  printf("444444  444444  4    44   4    44  444444  444444     4\n\n");
+  printf("                           4\n");
+  printf("                          44\n");
+  printf("                         4 4\n");
+  printf("                        4  4\n");
+  printf("                       4444444\n");
+  printf("                           4\n");
+
+
   //If no arguments have default setup 7x7, 4 to win
   if(argc == 1){
     args.height = 7;
@@ -56,7 +72,12 @@ int main(int argc, char** argv){
   if(args.connect < 1){
     args.connect = 4;
   }
+  if(args.connect > args.height || args.connect > args.width){
+    printf("Connections can't be greater than the dimensions of the board\n");
+    exit(1);
+  }
 
+  //Check for valid file name
   if(args.load_file != NULL){
     if(read_file(args.load_file, &buffer) == -1){
       printf("Error reading filename\n");
@@ -70,33 +91,23 @@ int main(int argc, char** argv){
       initializeFromLoad(&gameboard, buffer, buffsize, args.height, args.width);
 
       printGameboard(gameboard, args.height, args.width);
-      exit(1);
 
     }
 
   }
 
-  buffsize = args.height*args.width+args.height-2;
-  buffer = malloc(sizeof(char)*buffsize);
+  //Create new gameboard if no prior game save requested
+  if(args.load_file == NULL){
+    //Allocate space for the save buffer
+    buffsize = args.height*args.width+args.height-2;
+    buffer = malloc(sizeof(char)*buffsize);
 
+    //Initialize Gameboard
+    initializeGameboard(&gameboard, args.height, args.width);
+    printGameboard(gameboard, args.height, args.width);
 
-
-  printf("\n\n444444  444444  4     4   4     4  444444  444444  444444\n");
-  printf("4       4    4  4 4   4   4 4   4  4       4          4\n");
-  printf("4       4    4  4  4  4   4  4  4  444444  4          4\n");
-  printf("4       4    4  4   4 4   4   4 4  4       4          4\n");
-  printf("444444  444444  4    44   4    44  444444  444444     4\n\n");
-  printf("                           4\n");
-  printf("                          44\n");
-  printf("                         4 4\n");
-  printf("                        4  4\n");
-  printf("                       4444444\n");
-  printf("                           4\n");
-  printf("                    READY TO PLAY!!\n\n");
-  
-  //Initialize Gameboard
-  initializeGameboard(&gameboard, args.height, args.width);
-  printGameboard(gameboard, args.height, args.width);
+    printf("                    READY TO PLAY!!\n\n");
+  }
 
   //Start game loop
   while(strncmp(input, "quit", 10) < 0 ){
@@ -129,10 +140,13 @@ int main(int argc, char** argv){
         //Win found
         break;
       }
+
+      //Prints gameboard for status update after every move
       printGameboard(gameboard, args.height, args.width);
     }
 
   }
+  //Release memory
   free(buffer);
   free(gameboard);
   free(input);
